@@ -166,8 +166,18 @@ pub struct State {
     pub gote_hand: Vec<Captured>,
 }
 
-type Board = [[Option<(Profession, Side)>; 5]; 5];
+impl State {
+    pub fn new() -> State {
+        State {
+            b: INITIAL.clone(),
+            whose_turn: Sente,
+            sente_hand: vec![],
+            gote_hand: vec![],
+        }
+    }
+}
 
+type Board = [[Option<(Profession, Side)>; 5]; 5];
 
 type Coord = (Column, Row);
 
@@ -191,7 +201,6 @@ enum Column {
 
 use Column::*;
 use Row::*;
-
 
 fn parse_coord(a: char, b: char) -> Option<Coord> {
     let col = match a {
@@ -228,6 +237,7 @@ pub struct Movement {
     src: Option<Coord>, /* If None, 打 */
 }
 
+#[allow(non_snake_case)]
 pub fn M(s: &str) -> Movement {
     parse_movement(s).unwrap()
 }
@@ -242,7 +252,6 @@ pub enum StateOrVictory {
 fn it_works() {
     parse_movement("☗4四玉(35)").unwrap();
 }
-
 
 fn parse_movement(s: &str) -> Option<Movement> {
     let mut it = s.chars();
@@ -508,13 +517,8 @@ fn conj(a: Option<(Profession, Side)>) -> Option<(Profession, Side)> {
 /// use kyoto_ginkaku::INITIAL;
 /// use kyoto_ginkaku::State;
 /// use kyoto_ginkaku::StateOrVictory;
-/// let mut state = State {
-///     b: INITIAL,
-///     whose_turn: Sente,
-///     sente_hand: vec![],
-///     gote_hand: vec![],
-/// };
-/// 
+/// let mut state = State::new();
+///
 /// for mov in vec![
 ///     "☗4四玉(35)",
 ///     "☖4二玉(31)",
