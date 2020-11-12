@@ -182,7 +182,7 @@ type Board = [[Option<(Profession, Side)>; 5]; 5];
 type Coord = (Column, Row);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum Row {
+pub enum Row {
     Yi,
     Er,
     San,
@@ -191,7 +191,7 @@ enum Row {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum Column {
+pub enum Column {
     _1,
     _2,
     _3,
@@ -231,10 +231,10 @@ fn parse_coord(a: char, b: char) -> Option<Coord> {
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct Movement {
-    side: Side,
-    dst: Coord,
-    prof: Profession,
-    src: Option<Coord>, /* If None, 打 */
+    pub side: Side,
+    pub dst: Coord,
+    pub prof: Profession,
+    pub src: Option<Coord>, /* If None, 打 */
 }
 
 #[allow(non_snake_case)]
@@ -248,12 +248,21 @@ pub enum StateOrVictory {
     Victory(Side),
 }
 
-#[test]
-fn it_works() {
-    parse_movement("☗4四玉(35)").unwrap();
-}
-
-fn parse_movement(s: &str) -> Option<Movement> {
+/// ``` 
+/// use kyoto_ginkaku::parse_movement;
+/// use kyoto_ginkaku::Movement;
+/// use kyoto_ginkaku::Profession;
+/// use kyoto_ginkaku::Side;
+/// use kyoto_ginkaku::{Column, Row};
+/// 
+/// assert_eq!(parse_movement("☗4四玉(35)"), Some(Movement{
+///     side: Side::Sente,
+///     dst: (Column::_4, Row::Si),
+///     prof: Profession::Ou,
+///     src: Some((Column::_3, Row::Wu))
+/// }));
+/// ```
+pub fn parse_movement(s: &str) -> Option<Movement> {
     let mut it = s.chars();
 
     let side = match it.next()? {
