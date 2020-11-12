@@ -1,5 +1,5 @@
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-enum Profession {
+pub enum Profession {
     Kyo,
     To,
     Gin,
@@ -12,7 +12,7 @@ enum Profession {
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-enum Captured {
+pub enum Captured {
     KyoTo,
     GinKaku,
     KinKei,
@@ -75,7 +75,7 @@ impl Profession {
     }
 }
 
-fn print_state(a: &State) {
+pub fn print_state(a: &State) {
     for p in &a.gote_hand {
         print!("{} ", p.serialize())
     }
@@ -87,7 +87,7 @@ fn print_state(a: &State) {
     println!("");
 }
 
-fn print_board(a: &Board) {
+pub fn print_board(a: &Board) {
     fn s(a: Option<(Profession, Side)>) -> String {
         match a {
             None => String::from("　　"),
@@ -111,7 +111,7 @@ fn print_board(a: &Board) {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum Side {
+pub enum Side {
     Sente,
     Gote,
 }
@@ -138,7 +138,7 @@ impl Side {
 use Profession::*;
 use Side::*;
 
-const INITIAL: Board = [
+pub const INITIAL: Board = [
     [
         Some((Fu, Gote)),
         Some((Kin, Gote)),
@@ -159,53 +159,15 @@ const INITIAL: Board = [
 ];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct State {
-    b: Board,
-    whose_turn: Side,
-    sente_hand: Vec<Captured>,
-    gote_hand: Vec<Captured>,
+pub struct State {
+    pub b: Board,
+    pub whose_turn: Side,
+    pub sente_hand: Vec<Captured>,
+    pub gote_hand: Vec<Captured>,
 }
 
 type Board = [[Option<(Profession, Side)>; 5]; 5];
 
-fn main() {
-    let mut state = State {
-        b: INITIAL,
-        whose_turn: Sente,
-        sente_hand: vec![],
-        gote_hand: vec![],
-    };
-
-    for mov in vec![
-        "☗4四玉(35)",
-        "☖4二玉(31)",
-        "☗5四と(55)",
-        "☖5二歩(51)",
-        "☗5二香(54)",
-        "☖5二玉(42)",
-        "☗5三飛打",
-        "☖4二玉(52)",
-        "☗3四金(25)",
-        "☖3二玉(42)",
-        "☗5四銀(45)",
-        "☖3一玉(32)",
-        "☗3三玉(44)",
-        "☖4二金(41)",
-        "☗4二桂(34)",
-    ] {
-        print_state(&state);
-        println!("\n\nplaying {}:", mov);
-        let m = M(mov);
-        match apply_movement(m, &state).unwrap() {
-            StateOrVictory::State(new_state) => state = new_state,
-            StateOrVictory::Victory(side) => {
-                println!("{:?} victory", side);
-                return;
-            }
-        }
-    }
-    print_state(&state);
-}
 
 type Coord = (Column, Row);
 
@@ -266,12 +228,12 @@ pub struct Movement {
     src: Option<Coord>, /* If None, 打 */
 }
 
-fn M(s: &str) -> Movement {
+pub fn M(s: &str) -> Movement {
     parse_movement(s).unwrap()
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-enum StateOrVictory {
+pub enum StateOrVictory {
     State(State),
     Victory(Side),
 }
@@ -538,7 +500,52 @@ fn conj(a: Option<(Profession, Side)>) -> Option<(Profession, Side)> {
     }
 }
 
-fn apply_movement(m: Movement, s: &State) -> Option<StateOrVictory> {
+/// ```
+/// use kyoto_ginkaku::apply_movement;
+/// use kyoto_ginkaku::print_state;
+/// use kyoto_ginkaku::M;
+/// use kyoto_ginkaku::Side::*;
+/// use kyoto_ginkaku::INITIAL;
+/// use kyoto_ginkaku::State;
+/// use kyoto_ginkaku::StateOrVictory;
+/// let mut state = State {
+///     b: INITIAL,
+///     whose_turn: Sente,
+///     sente_hand: vec![],
+///     gote_hand: vec![],
+/// };
+/// 
+/// for mov in vec![
+///     "☗4四玉(35)",
+///     "☖4二玉(31)",
+///     "☗5四と(55)",
+///     "☖5二歩(51)",
+///     "☗5二香(54)",
+///     "☖5二玉(42)",
+///     "☗5三飛打",
+///     "☖4二玉(52)",
+///     "☗3四金(25)",
+///     "☖3二玉(42)",
+///     "☗5四銀(45)",
+///     "☖3一玉(32)",
+///     "☗3三玉(44)",
+///     "☖4二金(41)",
+///     "☗4二桂(34)",
+/// ] {
+///     print_state(&state);
+///     println!("\n\nplaying {}:", mov);
+///     let m = M(mov);
+///     match apply_movement(m, &state).unwrap() {
+///         StateOrVictory::State(new_state) => state = new_state,
+///         StateOrVictory::Victory(side) => {
+///             println!("{:?} victory", side);
+///             return;
+///         }
+///     }
+/// }
+/// print_state(&state);
+/// ```
+pub fn apply_movement(m: Movement, s: &State) -> Option<StateOrVictory> {
     if s.whose_turn != m.side {
         return None;
     }
