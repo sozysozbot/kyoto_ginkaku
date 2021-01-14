@@ -1,13 +1,31 @@
+#[warn(clippy::pedantic)]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum Profession {
+    /// 香車
     Kyo,
+
+    /// と金
     To,
+
+    /// 銀将
     Gin,
+
+    /// 角行
     Kaku,
+
+    /// 金将
     Kin,
+
+    /// 桂馬
     Kei,
+
+    /// 飛車
     Hi,
+
+    /// 歩兵
     Fu,
+
+    /// 王将
     Ou,
 }
 
@@ -248,13 +266,13 @@ pub enum StateOrVictory {
     Victory(Side),
 }
 
-/// ``` 
+/// ```
 /// use kyoto_ginkaku::parse_movement;
 /// use kyoto_ginkaku::Movement;
 /// use kyoto_ginkaku::Profession;
 /// use kyoto_ginkaku::Side;
 /// use kyoto_ginkaku::{Column, Row};
-/// 
+///
 /// assert_eq!(parse_movement("☗4四玉(35)"), Some(Movement{
 ///     side: Side::Sente,
 ///     dst: (Column::_4, Row::Si),
